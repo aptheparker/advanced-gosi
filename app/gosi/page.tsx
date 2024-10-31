@@ -12,8 +12,32 @@ interface ListingData {
   area: string;
   roomCount: string;
   totalPrice: string;
+  parsedPrice: number;
   date: string;
   views: string;
+}
+
+function parsedPrice(price: string): number {
+  let totalPrice = 0;
+  // Remove any non-numeric prefixes like "실투자" and whitespace
+  price = price.replace(/^[^\d]+/, '');
+
+  if (price.includes('억') && price.includes('천')) {
+    // 억원
+    const [billions, thousands] = price.split('억');
+    totalPrice += parseInt(billions, 10) * 100000000;
+    totalPrice += parseInt(thousands, 10) * 10000000;
+  } else if (price.includes('억')) {
+    // 억원
+    const [billions, rest] = price.split('억');
+    totalPrice += parseInt(billions, 10) * 100000000;
+    totalPrice += parseInt(rest, 10) * 10000;
+  } else {
+    // 만원
+    totalPrice += parseInt(price, 10) * 10000;
+  }
+
+  return totalPrice;
 }
 
 // Fetch all data from pages 1 to 50 on the server side
@@ -51,6 +75,8 @@ async function fetchAllListings(): Promise<ListingData[]> {
             area: $(cells[4]).text().trim(),
             roomCount: $(cells[5]).text().trim(),
             totalPrice: $(cells[6]).text().trim(),
+            parsedPrice: parsedPrice($(cells[6]).text().trim()),
+            // parsedPrice: parsedPrice('1억1000'),
             date: $(cells[7]).text().trim(),
             views: $(cells[8]).text().trim(),
           });
@@ -75,6 +101,8 @@ export default async function GositelsPage({
       const viewsB = parseInt(b.views.replace(/\D/g, '') || '0', 10);
       return viewsB - viewsA;
     });
+  } else if (searchParams?.sortBy === 'parsedPrice') {
+    allListings.sort((a, b) => b.parsedPrice - a.parsedPrice);
   }
 
   // Inline styles for table alignment and readability
@@ -111,6 +139,7 @@ export default async function GositelsPage({
             <th style={headerCellStyle}>m2(평수)</th>
             <th style={headerCellStyle}>룸갯수</th>
             <th style={headerCellStyle}>매물가총액</th>
+            <th style={headerCellStyle}>수정된 매물가</th>
             <th style={headerCellStyle}>작성일</th>
             <th style={headerCellStyle}>조회</th>
           </tr>
@@ -125,6 +154,7 @@ export default async function GositelsPage({
               <td style={cellStyle}>{listing.area}</td>
               <td style={cellStyle}>{listing.roomCount}</td>
               <td style={cellStyle}>{listing.totalPrice}</td>
+              <td style={cellStyle}>{listing.parsedPrice}</td>
               <td style={cellStyle}>{listing.date}</td>
               <td style={cellStyle}>{listing.views}</td>
             </tr>

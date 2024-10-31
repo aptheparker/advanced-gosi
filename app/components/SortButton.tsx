@@ -6,12 +6,28 @@ import { useSearchParams, useRouter } from 'next/navigation';
 export default function SortButton() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const isSortedByViews = searchParams?.get('sortBy') === 'views';
+  const currentSortBy = searchParams?.get('sortBy');
 
   const handleClick = () => {
-    const url = isSortedByViews ? '/gosi' : '/gosi?sortBy=views';
+    let url = '/gosi';
+
+    if (currentSortBy === 'views') {
+      url += '?sortBy=parsedPrice';
+    } else if (currentSortBy === 'parsedPrice') {
+      url = '/gosi';
+    } else {
+      url += '?sortBy=views';
+    }
+
     router.push(url);
   };
+
+  const buttonText =
+    currentSortBy === 'views'
+      ? '가격 순으로 정렬하기'
+      : currentSortBy === 'parsedPrice'
+      ? '원본'
+      : '조회 수 순으로 정렬하기';
 
   return (
     <button
@@ -30,7 +46,7 @@ export default function SortButton() {
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#45a049')}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4CAF50')}
     >
-      {isSortedByViews ? '원본' : '조회 수 순으로 정렬하기'}
+      {buttonText}
     </button>
   );
 }
