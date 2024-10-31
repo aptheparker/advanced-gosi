@@ -6,32 +6,23 @@ import { useSearchParams, useRouter } from 'next/navigation';
 export default function SortButton() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const currentSortBy = searchParams?.get('sortBy');
+  const currentSortBy = searchParams?.get('sortBy') || '';
 
-  const handleClick = () => {
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const sortBy = event.target.value;
     let url = '/gosi';
 
-    if (currentSortBy === 'views') {
-      url += '?sortBy=parsedPrice';
-    } else if (currentSortBy === 'parsedPrice') {
-      url = '/gosi';
-    } else {
-      url += '?sortBy=views';
+    if (sortBy) {
+      url += `?sortBy=${sortBy}`;
     }
 
     router.push(url);
   };
 
-  const buttonText =
-    currentSortBy === 'views'
-      ? '가격 순으로 정렬하기'
-      : currentSortBy === 'parsedPrice'
-      ? '원본'
-      : '조회 수 순으로 정렬하기';
-
   return (
-    <button
-      onClick={handleClick}
+    <select
+      value={currentSortBy}
+      onChange={handleSortChange}
       style={{
         padding: '8px 16px',
         margin: '20px 0',
@@ -41,12 +32,11 @@ export default function SortButton() {
         borderRadius: '4px',
         fontWeight: 'bold',
         cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#45a049')}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4CAF50')}
     >
-      {buttonText}
-    </button>
+      <option value="views">조회 수 순으로 정렬하기</option>
+      <option value="parsedPrice">가격 순으로 정렬하기</option>
+      <option value="">원본</option>
+    </select>
   );
 }
