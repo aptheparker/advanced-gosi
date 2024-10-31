@@ -20,8 +20,17 @@ interface ListingData {
 
 function parsedPrice(price: string): number {
   let totalPrice = 0;
+
+  if (
+    price === '권리없음' ||
+    price === '권리금무' ||
+    price === '' ||
+    price === '무권리'
+  ) {
+    return 0;
+  }
   // Remove any non-numeric prefixes like "실투자" and whitespace
-  price = price.replace(/^[^\d]+/, '');
+  price = price.replace(/^[^\d]+/, '').replace(/,/g, '');
 
   if (price.includes('억') && price.includes('천') && price.includes('백')) {
     const [billions, thousands] = price.split('억');
@@ -34,6 +43,9 @@ function parsedPrice(price: string): number {
     const [billions, thousands] = price.split('억');
     totalPrice += parseInt(billions, 10) * 100000000;
     totalPrice += parseInt(thousands, 10) * 10000000;
+  } else if (price.includes('억원')) {
+    const [billions] = price.split('억원');
+    totalPrice += parseInt(billions, 10) * 100000000;
   } else if (price.includes('억')) {
     // 1억
     const [billions, tenMillions] = price.split('억');
