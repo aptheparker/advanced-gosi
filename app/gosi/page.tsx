@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -22,18 +23,30 @@ function parsedPrice(price: string): number {
   // Remove any non-numeric prefixes like "실투자" and whitespace
   price = price.replace(/^[^\d]+/, '');
 
-  if (price.includes('억') && price.includes('천')) {
-    // 억원
+  if (price.includes('억') && price.includes('천') && price.includes('백')) {
+    const [billions, thousands] = price.split('억');
+    totalPrice += parseInt(billions, 10) * 100000000;
+    totalPrice += parseInt(thousands, 10) * 10000000;
+
+    const [_, hundreds] = price.split('천');
+    totalPrice += parseInt(hundreds, 10) * 1000000;
+  } else if (price.includes('억') && price.includes('천')) {
     const [billions, thousands] = price.split('억');
     totalPrice += parseInt(billions, 10) * 100000000;
     totalPrice += parseInt(thousands, 10) * 10000000;
   } else if (price.includes('억')) {
-    // 억원
-    const [billions, rest] = price.split('억');
+    // 1억
+    const [billions, tenMillions] = price.split('억');
     totalPrice += parseInt(billions, 10) * 100000000;
-    totalPrice += parseInt(rest, 10) * 10000;
+    if (tenMillions) {
+      // 1억1000
+      totalPrice += parseInt(tenMillions, 10) * 10000;
+    }
+  } else if (price.includes('천')) {
+    // 2천
+    const [tenMillions] = price.split('천');
+    totalPrice += parseInt(tenMillions, 10) * 10000000;
   } else {
-    // 만원
     totalPrice += parseInt(price, 10) * 10000;
   }
 
