@@ -152,7 +152,16 @@ export default async function GositelsPage({
 
   return (
     <div>
-      <h1>고시원 Listings</h1>
+      <h1
+        style={{
+          textAlign: 'center',
+          backgroundColor: '#b3e6ff',
+          marginBottom: '20px',
+          padding: '10px',
+        }}
+      >
+        고시텔 목록
+      </h1>
       <SortButton />
       <table style={tableStyle}>
         <thead>

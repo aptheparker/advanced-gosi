@@ -34,9 +34,9 @@ export default function SortButton() {
         cursor: 'pointer',
       }}
     >
-      <option value="views">조회 수 순으로 정렬하기</option>
-      <option value="parsedPrice">가격 순으로 정렬하기</option>
-      <option value="">원본</option>
+      <option value="views">조회 수 순으로 정렬</option>
+      <option value="parsedPrice">가격 순으로 정렬</option>
+      <option value="">작성일 순으로 정렬</option>
     </select>
   );
 }
