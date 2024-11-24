@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import * as styles from './styles';
+
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import iconv from 'iconv-lite';
-import SortButton from '../components/SortButton';
+import SortButton from '../../components/SortButton';
 
 interface ListingData {
   number: string;
@@ -101,7 +103,6 @@ async function fetchAllListings(): Promise<ListingData[]> {
             roomCount: $(cells[5]).text().trim(),
             totalPrice: $(cells[6]).text().trim(),
             parsedPrice: parsedPrice($(cells[6]).text().trim()),
-            // parsedPrice: parsedPrice('1억1000'),
             date: $(cells[7]).text().trim(),
             views: $(cells[8]).text().trim(),
           });
@@ -112,43 +113,24 @@ async function fetchAllListings(): Promise<ListingData[]> {
   return allListings;
 }
 
-export default async function GositelsPage({
+export default async function GosiPage({
   searchParams,
 }: {
   searchParams: any;
 }) {
   const allListings = await fetchAllListings();
 
-  // Check for sorting parameter and sort if needed
-  if (searchParams?.sortBy === 'views') {
+  const { sortBy } = await searchParams;
+
+  if (sortBy === 'views') {
     allListings.sort((a, b) => {
       const viewsA = parseInt(a.views.replace(/\D/g, '') || '0', 10);
       const viewsB = parseInt(b.views.replace(/\D/g, '') || '0', 10);
       return viewsB - viewsA;
     });
-  } else if (searchParams?.sortBy === 'parsedPrice') {
+  } else if (sortBy === 'parsedPrice') {
     allListings.sort((a, b) => b.parsedPrice - a.parsedPrice);
   }
-
-  // Inline styles for table alignment and readability
-  const tableStyle: React.CSSProperties = {
-    width: '100%',
-    borderCollapse: 'collapse',
-    marginTop: '20px',
-  };
-
-  const headerCellStyle: React.CSSProperties = {
-    padding: '10px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    borderBottom: '1px solid #ccc',
-  };
-
-  const cellStyle: React.CSSProperties = {
-    padding: '10px',
-    textAlign: 'center',
-    borderBottom: '1px solid #ddd',
-  };
 
   return (
     <div>
@@ -163,34 +145,34 @@ export default async function GositelsPage({
         고시텔 목록
       </h1>
       <SortButton />
-      <table style={tableStyle}>
+      <table style={styles.tableStyle}>
         <thead>
           <tr>
-            <th style={headerCellStyle}>ID</th>
-            <th style={headerCellStyle}>번호</th>
-            <th style={headerCellStyle}>제목</th>
-            <th style={headerCellStyle}>시,구</th>
-            <th style={headerCellStyle}>m2(평수)</th>
-            <th style={headerCellStyle}>룸갯수</th>
-            <th style={headerCellStyle}>매물가총액</th>
-            <th style={headerCellStyle}>수정된 매물가</th>
-            <th style={headerCellStyle}>작성일</th>
-            <th style={headerCellStyle}>조회</th>
+            <th style={styles.headerCellStyle}>ID</th>
+            <th style={styles.headerCellStyle}>번호</th>
+            <th style={styles.headerCellStyle}>제목</th>
+            <th style={styles.headerCellStyle}>시,구</th>
+            <th style={styles.headerCellStyle}>m2(평수)</th>
+            <th style={styles.headerCellStyle}>룸갯수</th>
+            <th style={styles.headerCellStyle}>매물가총액</th>
+            <th style={styles.headerCellStyle}>수정된 매물가</th>
+            <th style={styles.headerCellStyle}>작성일</th>
+            <th style={styles.headerCellStyle}>조회</th>
           </tr>
         </thead>
         <tbody>
           {allListings.map((listing, index) => (
             <tr key={index}>
-              <td style={cellStyle}>{index + 1}</td>
-              <td style={cellStyle}>{listing.number}</td>
-              <td style={cellStyle}>{listing.title}</td>
-              <td style={cellStyle}>{listing.location}</td>
-              <td style={cellStyle}>{listing.area}</td>
-              <td style={cellStyle}>{listing.roomCount}</td>
-              <td style={cellStyle}>{listing.totalPrice}</td>
-              <td style={cellStyle}>{listing.parsedPrice}</td>
-              <td style={cellStyle}>{listing.date}</td>
-              <td style={cellStyle}>{listing.views}</td>
+              <td style={styles.cellStyle}>{index + 1}</td>
+              <td style={styles.cellStyle}>{listing.number}</td>
+              <td style={styles.cellStyle}>{listing.title}</td>
+              <td style={styles.cellStyle}>{listing.location}</td>
+              <td style={styles.cellStyle}>{listing.area}</td>
+              <td style={styles.cellStyle}>{listing.roomCount}</td>
+              <td style={styles.cellStyle}>{listing.totalPrice}</td>
+              <td style={styles.cellStyle}>{listing.parsedPrice}</td>
+              <td style={styles.cellStyle}>{listing.date}</td>
+              <td style={styles.cellStyle}>{listing.views}</td>
             </tr>
           ))}
         </tbody>
